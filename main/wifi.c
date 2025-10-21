@@ -1,4 +1,5 @@
 #include "wifi.h"
+#include "esp_interface.h"
 #include "esp_wifi.h"
 #include "esp_wifi_types_generic.h"
 #include "freertos/idf_additions.h"
@@ -16,8 +17,11 @@
 #define SSID "TESTING"
 #define PSK "12345678"
 
+uint8_t esp_mac[6];
+
 char current_ssid[33];
 uint8_t current_bssid[6];
+
 bool live_attack = false;
 
 void wifi_init() {
@@ -52,6 +56,8 @@ void wifi_init() {
 	esp_wifi_set_max_tx_power(82);
     esp_wifi_set_mode(WIFI_MODE_APSTA);
     esp_wifi_start();
+
+	esp_wifi_get_mac(ESP_IF_WIFI_AP, esp_mac);
 }
 
 void wifi_scan() {
@@ -209,6 +215,9 @@ void eapol_packet_handler(void* buf, wifi_promiscuous_pkt_type_t type) {
 
 	eapol_info eapol_inf = is_eapol_frame(frame->payload);
 	if(eapol_inf == EAPOL_NONE) return; 
+
+	if(memcmp(frame->payload+4, esp_mac, 6) == 0 || memcmp(frame->payload+10, esp_mac, 6) == 0) return; // do not capture esps own frames
+	
 
 	int eapol_start_position = eapol_inf == EAPOL_START_30 ? 30 : 32;
 	uint8_t message_number = eapol_message_number(frame->payload+eapol_start_position);
