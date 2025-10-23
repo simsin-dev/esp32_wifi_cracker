@@ -71,6 +71,8 @@ void wifi_scan() {
     esp_wifi_scan_get_ap_records(&ap_count, ap_info);
 
 	for(int i = 0; i < ap_count; i++) {
+		if(ap_info[i].authmode != WIFI_AUTH_WPA_PSK && ap_info[i].authmode != WIFI_AUTH_WPA2_PSK && ap_info[i].authmode != WIFI_AUTH_WPA_WPA2_PSK && ap_info[i].authmode != WIFI_AUTH_WPA3_PSK && ap_info[i].authmode != WIFI_AUTH_WPA2_WPA3_PSK) continue;
+
 		attack_target_t target;
 		memcpy(target.ssid, ap_info[i].ssid, 33);
 		memcpy(target.bssid, ap_info[i].bssid, 6);
@@ -205,6 +207,7 @@ void extract_eapol_hash(eapol_frame_t* message_1, eapol_frame_t* message_2, eapo
 	}
 }
 
+// I'm 90% sure that this can turn in to a race condition, but works for now
 eapol_frame_t M1;
 eapol_frame_t M2;
 eapol_frame_t M3;
