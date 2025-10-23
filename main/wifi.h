@@ -43,8 +43,8 @@ typedef struct eapol_frame_t{
 	uint8_t message_number;
 	uint8_t mac_to[6];
 	uint8_t mac_from[6];
-	uint8_t nonce[32];
-	uint8_t mic[16];
+	uint8_t* nonce;
+	uint8_t* mic;
 	uint16_t full_eapol_length;
 	uint8_t* full_eapol_packet;
 } eapol_frame_t;

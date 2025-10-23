@@ -149,13 +149,14 @@ eapol_frame_t* disect_eapol_frame(uint8_t* frame, uint8_t message_number, int ea
 
 	memcpy(eapol_frame->mac_to, frame+4, 6);
 	memcpy(eapol_frame->mac_from, frame+10, 6);
-	memcpy(eapol_frame->nonce, frame+eapol_start_position+19, 32);
-	memcpy(eapol_frame->mic, frame+eapol_start_position+83, 16);
 
 	free(eapol_frame->full_eapol_packet);
 	eapol_frame->full_eapol_length = ((uint16_t)*(frame+eapol_start_position+5)) + 4;
 	eapol_frame->full_eapol_packet = malloc(eapol_frame->full_eapol_length);
 	memcpy(eapol_frame->full_eapol_packet, frame+eapol_start_position+2, eapol_frame->full_eapol_length);
+
+	eapol_frame->nonce = eapol_frame->full_eapol_packet+17;
+	eapol_frame->mic = eapol_frame->full_eapol_packet+81;
 
 
 	return eapol_frame;
@@ -177,7 +178,7 @@ void extract_eapol_hash(eapol_frame_t* message_1, eapol_frame_t* message_2, eapo
 			uint8_to_hex_string(message_1->mic, 16, mic, 33);
 			uint8_to_hex_string(message_2->nonce, 32, nonce, 65);
 			
-			memset(message_1->full_eapol_packet + 81, 0, 16); // clear MIC for eapol_client field
+			memset(message_1->mic, 0, 16); // clear MIC for eapol_client field
 			char eapol_client[message_1->full_eapol_length * 2 + 1];
 			uint8_to_hex_string(message_1->full_eapol_packet, message_1->full_eapol_length, eapol_client, message_1->full_eapol_length*2 + 1);
 
