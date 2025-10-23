@@ -8,14 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "sdkconfig.h"
 #include "wifi_checks_bypass.h"
 #include "led.h"
 #include "targeting.h"
-
-
-#define MAX_SCAN_LIST_LENGTH 30
-#define SSID "TESTING"
-#define PSK "12345678"
 
 uint8_t esp_mac[6];
 
@@ -42,9 +38,9 @@ void wifi_init() {
 
 	wifi_config_t wifi_ap_conf = {
 		.ap = {
-			.ssid = SSID,
-			.ssid_len = strlen(SSID),
-			.password = PSK,
+			.ssid = CONFIG_SSID,
+			.ssid_len = strlen(CONFIG_SSID),
+			.password = CONFIG_PASSWORD,
 			.authmode = WIFI_AUTH_WPA2_PSK,
 			.max_connection = 1
 		}
@@ -61,9 +57,11 @@ void wifi_init() {
 }
 
 void wifi_scan() {
+	#if CONFIG_LED
 	led_set_color(0x00, 0x00, 0xff);
+	#endif
 
-    wifi_ap_record_t ap_info[MAX_SCAN_LIST_LENGTH];
+    wifi_ap_record_t ap_info[CONFIG_MAX_SCAN_LIST_LENGTH];
     uint16_t ap_count = 0;
 
 	esp_wifi_scan_start(NULL, true); //bool to change if this call is blocking
@@ -140,7 +138,10 @@ void extract_pmkid(uint8_t* frame) {
 	snprintf(hash, 150, "WPA*01*%s*%s*%s*%s***01\n",pmkid,bssid,sta_mac,ssid);
 	printf("%s\n", hash);
 
+	#if CONFIG_LED
 	led_set_color(0x00, 0xff, 0x00);
+	#endif
+
 	live_attack = false; 
 
 	set_current_target_cracked(hash);
@@ -193,7 +194,10 @@ void extract_eapol_hash(eapol_frame_t* message_1, eapol_frame_t* message_2, eapo
 
 			printf("%s\n",hash);
 
+			#if CONFIG_LED
 			led_set_color(0x00, 0xff, 0x00);
+			#endif
+
 			live_attack = false; 
 
 			set_current_target_cracked(hash);

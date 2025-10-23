@@ -10,7 +10,10 @@
 void app_main(void)
 {
 	wifi_init();
+
+	#if CONFIG_LED
 	led_init();
+	#endif
 
 	wifi_scan();
 
@@ -22,7 +25,10 @@ void app_main(void)
 			wifi_scan();
     		vTaskDelay(5000 / portTICK_PERIOD_MS);
 		} else {
+			#if CONFIG_LED
 			led_set_color(0xff, 0x00, 0x00);
+			#endif
+
 			printf("Attacking: %s\n", target->ssid);
 			sniff_eapol(target->primary_channel, (char*)target->ssid, target->bssid);
 			deauth_ap(target->bssid, 30);

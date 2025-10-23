@@ -4,8 +4,6 @@
 #include "targeting.h"
 #include <string.h>
 
-#define PORT 80
-
 char header[] = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
 
 int setup_socket()
@@ -20,7 +18,7 @@ int setup_socket()
 	struct sockaddr_in sock_addr;
 	sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	sock_addr.sin_family = AF_INET;
-	sock_addr.sin_port = htons(PORT);
+	sock_addr.sin_port = htons(CONFIG_HTTP_PORT);
 	sock_addr.sin_len = 16;
 
 	int res = bind(sock, (struct sockaddr *)&sock_addr, sizeof(sock_addr));

@@ -11,6 +11,12 @@ idf.py build
 idf.py flash
 idf.py monitor # not required
 ```
+## Configuration
+To configure the project use:
+```sh
+idf.py menuconfig
+```
+And go to: -> Component config -> ESP32 wifi cracker configuration
 
 # Usage
 Tool will automaticly attack surrounding wifi networks when powered, creating [hashcat 22000/22001](https://hashcat.net/wiki/doku.php?id=cracking_wpawpa2) hashes.<br> 

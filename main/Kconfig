@@ -1,0 +1,28 @@
+menu "ESP32 wifi cracker configuration"
+
+config SSID
+		string "SSID of esps network"
+		default "ESP32"
+
+config PASSWORD
+		string "Password for esps network"
+		default "12345678"
+
+config MAX_SCAN_LIST_LENGTH
+		int "The maximum number of networks esp can search for at once"
+		default 20
+
+config HTTP_PORT
+		int "HTTP port used to retrieve hashes"
+		default 80
+
+config LED
+		bool 'Onboard LED light support'
+		default y
+
+config LED_GIPO
+		int "LED GPIO number"
+		default 8
+		depends on LED
+
+endmenu
