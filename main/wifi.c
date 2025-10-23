@@ -277,6 +277,9 @@ void sniff_eapol(uint8_t channel, char ssid[], uint8_t bssid[6]) {
 	strcpy(current_ssid, ssid);
 	memcpy(current_bssid, bssid, 6);
 
+	esp_wifi_deauth_sta(0);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
 	esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
 
 	wifi_promiscuous_filter_t filter = {.filter_mask = WIFI_PROMIS_FILTER_MASK_DATA};
